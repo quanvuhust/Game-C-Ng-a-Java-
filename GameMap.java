@@ -20,7 +20,7 @@ public class GameMap extends Game {
 	private int numberPlayer;
 
 	GameMap() {
-		numberPlayer = 1;
+		numberPlayer = 4;
 		player = new Player[numberPlayer + 1];
 
 		for (int color = 1; color <= numberPlayer; color++) {
