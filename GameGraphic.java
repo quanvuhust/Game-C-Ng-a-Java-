@@ -16,7 +16,7 @@ public class GameGraphic extends Game {
 
 	/* Tọa độ của position 0 trên bản đồ */
 	static final int x0_position = 287;
-	static final int y0_position = 0;
+	static final int y0_position = 9;
 	static final Coordinate baseStableCoor[] = {null};
 	static final Coordinate baseDestinationCoor[] = {null, new Coordinate (x0_position + DISTANCE, y0_position + DISTANCE),
 	                                                 new Coordinate (x0_position - 5 * DISTANCE, y0_position + 7 * DISTANCE),
@@ -37,14 +37,14 @@ public class GameGraphic extends Game {
 		final int numberSide = 7;
 		iconDie = new ImageIcon[numberSide];
 		for (int i = 0; i < numberSide; i++) {
-			iconDie[i] = new ImageIcon("D" + i + ".JPG");
+			iconDie[i] = new ImageIcon(getClass().getResource("D" + i + ".JPG"));
 		}
 	}
 
 	void prepareHorse() {
 		iconHorse = new ImageIcon[Player.NUMBER_HORSE + 1];
 		for (int i = 1; i <= Player.NUMBER_HORSE; i++) {
-			iconHorse[i] = new ImageIcon("H" + i + ".GIF");
+			iconHorse[i] = new ImageIcon(getClass().getResource("H" + i + ".GIF"));
 		}
 	}
 
@@ -83,13 +83,12 @@ public class GameGraphic extends Game {
 	public Coordinate getCoordinate(HorseSea horse) {
 		Coordinate coor = new Coordinate(x0_position, y0_position);
 		int position = horse.getPosition();
-		System.out.println(position);
 
 		if (position == HorseSea.FINISH_POSITION) {
 			int color = horse.getColor();
 			coor.x = baseDestinationCoor[color].x;
 			coor.y = baseDestinationCoor[color].y;
-			
+
 			if (color == BLUE) {
 				coor.y += DISTANCE * horse.getRank();
 			} else if (color == YELLOW) {
@@ -99,7 +98,7 @@ public class GameGraphic extends Game {
 			} else if (color == RED) {
 				coor.x -= DISTANCE * horse.getRank();
 			}
-			
+
 			return coor;
 		}
 
@@ -128,7 +127,7 @@ public class GameGraphic extends Game {
 		Coordinate coor = getCoordinate(horse);// Vị trí cá ngựa trên màn hình.
 
 		horse.setIcon(iconHorse);
-		horse.getLabel().setBounds(coor.x, coor.y, 20, 30);
+		horse.getLabel().setBounds(coor.x, coor.y, 30, 30);
 		mapPanel.add(horse.getLabel());
 		mainFrame.setVisible(true);
 	}
@@ -236,6 +235,7 @@ public class GameGraphic extends Game {
 				drawHorse(player.horse[player.destination.getRank(i)]);
 			}
 		}
+		mainFrame.setVisible(true);
 	}
 
 	public void drawDropButton() {
@@ -305,7 +305,7 @@ public class GameGraphic extends Game {
 		mainFrame.setVisible(true);
 	}
 
-	public void drawMap(GameMap map) {
+	public void drawMap(GameMap map, int turn) {
 		mapPanel = new JPanel() {
 			@Override
 			public void paintComponent(Graphics g) {
@@ -326,6 +326,11 @@ public class GameGraphic extends Game {
 				drawHorse(map.getPlayer()[color].horse[idHorse]);
 			}
 		}
+		
+		if (turn != 0) {
+			drawDestination(map.getPlayer()[turn]);
+		}
+	
 		mainFrame.add(mapPanel, BorderLayout.WEST);
 		mainFrame.setVisible(true);
 	}

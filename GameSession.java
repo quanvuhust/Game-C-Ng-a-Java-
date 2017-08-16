@@ -16,7 +16,7 @@ public class GameSession extends Game {
 		map = new GameMap();
 		die = new Die();
 		graphic = new GameGraphic();
-		graphic.drawMap(map);
+		graphic.drawMap(map, 0);
 		graphic.drawControl(die);
 
 		endGameFlag = false;
@@ -48,9 +48,9 @@ public class GameSession extends Game {
 			}
 			horsePhaseFlag = true;
 			int steps = die.getSteps();
-			
+			//steps = Integer.parseInt(JOptionPane.showInputDialog(null, "Nhập steps: ", JOptionPane.INFORMATION_MESSAGE));
 			if(steps == 6){
-				//turnBonus = ONE_BONUS;
+				turnBonus = ONE_BONUS;
 				graphic.drawXuatQuanButton(map, color);
 			}
 
@@ -64,8 +64,8 @@ public class GameSession extends Game {
 			map.removePlayerListener(color);
 			graphic.removeXuatQuanButton();
 			horsePhaseFlag = false;
-			graphic.drawMap(map);
-			graphic.drawDestination(map.getPlayer()[color]);
+			graphic.drawMap(map, color);
+			
 			diePhaseFlag = true;
 			turn = (turn + turnBonus) % map.getNumerPlayer() + 1;
 			
