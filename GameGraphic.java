@@ -11,12 +11,16 @@ public class GameGraphic extends Game {
 		Tất cả các tọa độ của các đối tượng trên màn hình
 		sẽ là địa chỉ tương đối với các mốc được chọn sắn.
 	*/
+
+	/* Kích thước cửa sổ game */
 	static final int W_FRAME = 910;
 	static final int H_FRAME = 710;
 
 	/* Tọa độ của position 0 trên bản đồ */
 	static final int x0_position = 287;
 	static final int y0_position = 9;
+
+	/* Các tọa độ cơ sở của chuồng, đích đến */
 	static final Coordinate baseStableCoor[] = {null};
 	static final Coordinate baseDestinationCoor[] = {null, new Coordinate (x0_position + DISTANCE, y0_position + DISTANCE),
 	                                                 new Coordinate (x0_position - 5 * DISTANCE, y0_position + 7 * DISTANCE),
@@ -84,6 +88,7 @@ public class GameGraphic extends Game {
 		Coordinate coor = new Coordinate(x0_position, y0_position);
 		int position = horse.getPosition();
 
+		/* Tính toán tọa độ khi quân cờ đang ở vị trí đích đến cuối cùng */
 		if (position == HorseSea.FINISH_POSITION) {
 			int color = horse.getColor();
 			coor.x = baseDestinationCoor[color].x;
@@ -102,6 +107,7 @@ public class GameGraphic extends Game {
 			return coor;
 		}
 
+		/* Tính toán tọa độ của quân cờ dựa vào tọa độ cơ sở x0, y0 */
 		for (int i = 1; i < point.length; i++) {
 			boolean oddFlag = (i % 2 != 0);
 
@@ -132,7 +138,13 @@ public class GameGraphic extends Game {
 		mainFrame.setVisible(true);
 	}
 
-	public void drawDie(Die die) {
+	public void drawDie() {
+		labelDie = new JLabel(iconDie[0]);
+		controlPanel.add(labelDie);
+		mainFrame.setVisible(true);
+	}
+
+	public void drawThrowButton(Die die) {
 		class AnimationDie implements Runnable {
 			Thread thread = null;
 
@@ -142,16 +154,15 @@ public class GameGraphic extends Game {
 			}
 
 			public void run() {
-				try {
-					for (int i = 1; i < 15; i++) {
-						die.thrown();
-						labelDie.setIcon(iconDie[die.getSteps()]);
-						sleep(100);
-					}
+				/* Tạo hiệu ứng tung xúc xắc */
+				for (int i = 1; i < 15; i++) {
+					die.thrown();
+					labelDie.setIcon(iconDie[die.getSteps()]);
+					sleep(100);
+				}
 
-					mainFrame.setVisible(true);
-					diePhaseSema.release();
-				} catch (Exception e) { }
+				mainFrame.setVisible(true);
+				diePhaseSema.release();
 			}
 		}
 
@@ -168,53 +179,54 @@ public class GameGraphic extends Game {
 		});
 
 		controlPanel.add(throwButton);
-		controlPanel.add(labelDie);
-	}
-
-	public void drawThrowButton() {
-
+		mainFrame.setVisible(true);
 	}
 
 	public void drawTime() {
 		class DigitalWatch implements Runnable {
 			Thread thread = null;
-			int hours = 0, minutes = 0, seconds = 0;
+			Date startTime = null;
 			String timeString = "";
 			JButton button;
 
 			DigitalWatch() {
 				thread = new Thread(this);
-				thread.start();
-
 				button = new JButton();
-				button.setBounds(100, 100, 100, 50);
-
 				controlPanel.add(button);
-
+				thread.start();
 				mainFrame.setVisible(true);
 			}
 
 			public void reset() {
-
+				Calendar cal = Calendar.getInstance();
+				startTime = cal.getTime();
 			}
 
 			public void run() {
-				try {
-					while (true) {
-						Calendar cal = Calendar.getInstance();
-						hours = cal.get(Calendar.HOUR_OF_DAY);
-						minutes = cal.get(Calendar.MINUTE);
-						seconds = cal.get(Calendar.SECOND);
+				reset();
 
-						SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
-						Date date = cal.getTime();
-						timeString = formatter.format(date);
+				while (true) {
+					Calendar cal = Calendar.getInstance();
+					Date currentTime = cal.getTime();
+					long time = (currentTime.getTime() - startTime.getTime()) / 1000;
+					long second = time % 60, hour = (time / 60), minute = hour % 60;
+					String s = Long.toString(second), h = Long.toString(hour), m = Long.toString(minute);
 
-						printTime();
-
-						thread.sleep(1000);  // interval duoc cung cap bang gia tri mili giay
+					if(second < 10){
+						s = "0" + s;
 					}
-				} catch (Exception e) { }
+					if(hour < 10){
+						h = "0" + h;
+					}
+					if(minute < 10){
+						m = "0" + m;
+					}
+
+					timeString = h + ":" + m + ":" + s;
+
+					printTime();					
+					sleep(1000);
+				}
 			}
 
 			public void printTime() {
@@ -228,16 +240,7 @@ public class GameGraphic extends Game {
 	public void drawStable(Stable stable) {
 
 	}
-	/*
-	public void drawDestination(Player player) {
-		for (int i = 0; i < Destination.NUMBER_RANK; i++) {
-			if (player.destination.getRank(i) != Destination.NO_HORSE) {
-				drawHorse(player.horse[player.destination.getRank(i)]);
-			}
-		}
-		mainFrame.setVisible(true);
-	}
-	*/
+
 	public void drawDropButton() {
 		dropButton = new JButton("Bỏ lượt");
 
@@ -284,6 +287,12 @@ public class GameGraphic extends Game {
 		}
 	}
 
+	public void drawTurnLabel() {
+		turnLabel = new JLabel("");
+		turnLabel.setOpaque(true);
+		controlPanel.add(turnLabel);
+	}
+
 	public void drawControl(Die die) {
 		controlPanel = new JPanel() {
 			@Override
@@ -294,14 +303,12 @@ public class GameGraphic extends Game {
 		};
 		mainFrame.add(controlPanel);
 
-		final int x = 110, y = 110;
-		labelDie = new JLabel(iconDie[0]);
-		turnLabel = new JLabel("");
-		turnLabel.setOpaque(true);
-		controlPanel.add(turnLabel);
-
-		drawDie(die);
+		drawTurnLabel();
+		drawDie();
+		drawThrowButton(die);
 		drawDropButton();
+		drawTime();
+
 		mainFrame.setVisible(true);
 	}
 
@@ -315,31 +322,16 @@ public class GameGraphic extends Game {
 		};
 		mapPanel.setPreferredSize(new Dimension(W_FRAME - 215, H_FRAME - 15));
 		mapPanel.setLayout(null);
-		
-		int num = map.getNumberPlayer();
-		for(int i = 1; i <= num; i++){
-			for(int j = 0; j < Player.NUMBER_HORSE; j++){
-				if(map.getPlayer()[i].horse[j] != null){
-					drawHorse(map.getPlayer()[i].horse[j]);
-				}	
-			}
-		}
-		/*
-		for (int i = 0; i < GameMap.NUMBER_NODE; i++) {
-			int inf = map.getMap(i);
-			if (inf == 0) {
 
-			} else if (inf / 10 < 5) {
-				int color = inf / 10;
-				int idHorse = inf % 10;
-				drawHorse(map.getPlayer()[color].horse[idHorse]);
+		int num = map.getNumberPlayer();
+		for (int i = 1; i <= num; i++) {
+			for (int j = 0; j < Player.NUMBER_HORSE; j++) {
+				if (map.getPlayer()[i].horse[j] != null) {
+					drawHorse(map.getPlayer()[i].horse[j]);
+				}
 			}
 		}
-		
-		if (turn != 0) {
-			drawDestination(map.getPlayer()[turn]);
-		}
-		*/
+
 		mainFrame.add(mapPanel, BorderLayout.WEST);
 		mainFrame.setVisible(true);
 	}

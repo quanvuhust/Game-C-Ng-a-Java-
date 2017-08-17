@@ -48,7 +48,7 @@ public class GameSession extends Game {
 			}
 			horsePhaseFlag = true;
 			int steps = die.getSteps();
-			//steps = Integer.parseInt(JOptionPane.showInputDialog(null, "Nhập steps: ", JOptionPane.INFORMATION_MESSAGE));
+			// steps = Integer.parseInt(JOptionPane.showInputDialog(null, "Nhập steps: ", JOptionPane.INFORMATION_MESSAGE)); 
 			if(steps == 6){
 				turnBonus = ONE_BONUS;
 				graphic.drawXuatQuanButton(map, color);
