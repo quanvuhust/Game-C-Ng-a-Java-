@@ -228,7 +228,7 @@ public class GameGraphic extends Game {
 	public void drawStable(Stable stable) {
 
 	}
-
+	/*
 	public void drawDestination(Player player) {
 		for (int i = 0; i < Destination.NUMBER_RANK; i++) {
 			if (player.destination.getRank(i) != Destination.NO_HORSE) {
@@ -237,7 +237,7 @@ public class GameGraphic extends Game {
 		}
 		mainFrame.setVisible(true);
 	}
-
+	*/
 	public void drawDropButton() {
 		dropButton = new JButton("Bỏ lượt");
 
@@ -305,7 +305,7 @@ public class GameGraphic extends Game {
 		mainFrame.setVisible(true);
 	}
 
-	public void drawMap(GameMap map, int turn) {
+	public void drawMap(GameMap map) {
 		mapPanel = new JPanel() {
 			@Override
 			public void paintComponent(Graphics g) {
@@ -315,7 +315,16 @@ public class GameGraphic extends Game {
 		};
 		mapPanel.setPreferredSize(new Dimension(W_FRAME - 215, H_FRAME - 15));
 		mapPanel.setLayout(null);
-
+		
+		int num = map.getNumberPlayer();
+		for(int i = 1; i <= num; i++){
+			for(int j = 0; j < Player.NUMBER_HORSE; j++){
+				if(map.getPlayer()[i].horse[j] != null){
+					drawHorse(map.getPlayer()[i].horse[j]);
+				}	
+			}
+		}
+		/*
 		for (int i = 0; i < GameMap.NUMBER_NODE; i++) {
 			int inf = map.getMap(i);
 			if (inf == 0) {
@@ -330,7 +339,7 @@ public class GameGraphic extends Game {
 		if (turn != 0) {
 			drawDestination(map.getPlayer()[turn]);
 		}
-	
+		*/
 		mainFrame.add(mapPanel, BorderLayout.WEST);
 		mainFrame.setVisible(true);
 	}

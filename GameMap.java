@@ -28,7 +28,7 @@ public class GameMap extends Game {
 		}
 	}
 
-	public int getNumerPlayer() {
+	public int getNumberPlayer() {
 		return numberPlayer;
 	}
 

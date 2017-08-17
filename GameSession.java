@@ -16,7 +16,7 @@ public class GameSession extends Game {
 		map = new GameMap();
 		die = new Die();
 		graphic = new GameGraphic();
-		graphic.drawMap(map, 0);
+		graphic.drawMap(map);
 		graphic.drawControl(die);
 
 		endGameFlag = false;
@@ -64,10 +64,10 @@ public class GameSession extends Game {
 			map.removePlayerListener(color);
 			graphic.removeXuatQuanButton();
 			horsePhaseFlag = false;
-			graphic.drawMap(map, color);
+			graphic.drawMap(map);
 			
 			diePhaseFlag = true;
-			turn = (turn + turnBonus) % map.getNumerPlayer() + 1;
+			turn = (turn + turnBonus) % map.getNumberPlayer() + 1;
 			
 			if(map.isWin()){
 				endGameFlag = true;
