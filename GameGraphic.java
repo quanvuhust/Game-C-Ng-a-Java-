@@ -209,7 +209,7 @@ public class GameGraphic extends Game {
 					Calendar cal = Calendar.getInstance();
 					Date currentTime = cal.getTime();
 					long time = (currentTime.getTime() - startTime.getTime()) / 1000;
-					long second = time % 60, hour = (time / 60), minute = hour % 60;
+					long second = time % 60, hour = (time / 3600), minute = (time / 60) % 60;
 					String s = Long.toString(second), h = Long.toString(hour), m = Long.toString(minute);
 
 					if(second < 10){

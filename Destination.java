@@ -22,27 +22,31 @@ public class Destination extends Game {
 		return this.rank[rank];
 	}
 
-	public boolean setDestination(int rank, int number, HorseSea horse) {
-		if (rank + number > peek) {
+	public boolean setDestination(int rank, int newRank, HorseSea horse) {
+		newRank--;
+		if (newRank > peek) {
 			showError("Không thể thăng hạng quân này.");
 			return false;
 		}
 
-		for (int i = rank + 1; i < rank + number; i++) {
-			if (this.rank[i] != NO_HORSE) {
-				showError("Không thể thăng hạng quân này.");
-				return false;
+		if(rank == NO_RANK){
+			for (int i = 0; i <= newRank; i++) {
+				if (this.rank[i] != NO_HORSE) {
+					showError("Không thể thăng hạng quân này.");
+					return false;
+				}
 			}
-		}		
-		
-		if(rank != NO_RANK) {
-			this.rank[rank + number] = this.rank[rank];
-			horse.setRank(rank + number);
-			this.rank[rank] =NO_HORSE;
+
+			this.rank[newRank] = horse.getId();
+			horse.setRank(newRank);
 		} else {
-			rank += number;
-			this.rank[rank] = horse.getId();
-			horse.setRank(rank);
+			if(newRank - rank == 1 && this.rank[newRank] == NO_HORSE){
+				this.rank[newRank] = this.rank[rank];
+				horse.setRank(newRank);
+				this.rank[rank] =NO_HORSE;
+			} else {
+				showError("Không thể thăng hạng quân này.");
+			}
 		}
 
 		if (this.rank[peek] != NO_HORSE) {
